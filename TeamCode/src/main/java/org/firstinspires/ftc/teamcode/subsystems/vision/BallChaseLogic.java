@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // Hive Vision v1.1 library (copied from ftc_ball_chase_lib/final/)
-import org.firstinspires.ftc.teamcode.BallChaseController;
-import org.firstinspires.ftc.teamcode.BallTracker;
+import org.firstinspires.ftc.teamcode.subsystems.vision.*;
 
 /**
  * All ball-chasing logic in one place.

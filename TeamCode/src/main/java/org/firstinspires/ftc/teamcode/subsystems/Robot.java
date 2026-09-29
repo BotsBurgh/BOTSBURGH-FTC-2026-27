@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.vision.HiveVisionLimelight;
+import org.firstinspires.ftc.teamcode.subsystems.vision.BallChaseController;
 
 /**
  * Owns every subsystem. OpModes create one Robot and use its fields.
@@ -22,13 +22,13 @@ public class Robot {
     public final Drivetrain drive;
     public final Intake intake;
     public final Shooter shooter;
-    public final HiveVisionLimelight vision;
+    public final BallChaseController vision;
 
     public Robot(HardwareMap hardwareMap) {
         drive = new Drivetrain(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
-        vision = new HiveVisionLimelight(hardwareMap);
+        vision = new BallChaseController(hardwareMap);
     }
 
     /** Call once at the top of every loop(). */

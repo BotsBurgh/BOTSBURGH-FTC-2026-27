@@ -32,7 +32,7 @@ public class Tests extends Procedure {
         INTERPOLATION_CURVED,
         @DisplayName("Localization Test")
         LOCALIZATION,
-        @DisplayName("Driving Test")
+        @DisplayName("gyatt Test")
         DRIVING,
         @DisplayName("Pose Test")
         POSE

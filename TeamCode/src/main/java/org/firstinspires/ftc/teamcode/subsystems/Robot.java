@@ -22,25 +22,25 @@ public class Robot {
     public final Drivetrain drive;
     public final Intake intake;
     public final Shooter shooter;
-    public final BallChaseController vision;
+//    public final BallChaseController vision;
 
     public Robot(HardwareMap hardwareMap) {
         drive = new Drivetrain(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
-        vision = new BallChaseController(hardwareMap);
+//        vision = new BallChaseController(hardwareMap);
     }
 
     /** Call once at the top of every loop(). */
     public void update() {
-        vision.update();
+//        vision.update();
         // add intake.update(), shooter.update() here if they have them
     }
 
     /** Call from stop(). */
     public void stop() {
         drive.stop();
-        vision.stop();
+//        vision.stop();
         intake.stop();
         shooter.stop();
         // add intake/shooter stop methods here if they have them

@@ -1,128 +1,109 @@
 package org.firstinspires.ftc.teamcode.subsystems.turret;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import org.firstinspires.ftc.teamcode.subsystems.turret.*;
+import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 
 public class Shooter {
+    private final DcMotorEx turret;
+    private final DcMotorEx counterRoller;
+    private final Servo aimer1;
+    private final Servo aimer2;
 
-    private final DcMotorEx shooter;
-    private final DcMotorEx transfer;
-
-    // Inventory BEFORE shoot was pressed
-    private int pollen = 0;
-    private int nectar = 0;
+    private DigitalChannel encoderA;
+    private DigitalChannel encoderB;
 
     public Shooter(HardwareMap hardwareMap) {
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
+        counterRoller = hardwareMap.get(DcMotorEx.class, "counterRoller");
 
-        shooter = hardwareMap.get(
-                DcMotorEx.class,
-                "shooter"
-        );
+        aimer1 = hardwareMap.get(Servo.class, "aimer1");
+        aimer2 = hardwareMap.get(Servo.class, "aimer2");
 
-        transfer = hardwareMap.get(
-                DcMotorEx.class,
-                "transfer"
-        );
+        encoderA = hardwareMap.get(DigitalChannel.class, "encoderA");
+        encoderB = hardwareMap.get(DigitalChannel.class, "encoderB");
 
-        shooter.setMode(
-                DcMotorEx.RunMode.RUN_USING_ENCODER
-        );
+        encoderA.setMode(DigitalChannel.Mode.INPUT);
+        encoderB.setMode(DigitalChannel.Mode.INPUT);
+
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setTargetPosition(0);
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret.setPower(0);
+
+        counterRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        updatePIDF();
     }
 
+    public void updatePIDF() {
+        turret.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(ShooterConfig.TURRET_P, ShooterConfig.TURRET_I, ShooterConfig.TURRET_D, ShooterConfig.TURRET_F));
 
-    // ==========================================
-    // INVENTORY
-    // ==========================================
-
-    public void setPollen(int amount) {
-        pollen = amount;
+        counterRoller.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(ShooterConfig.ROLLER_P, ShooterConfig.ROLLER_I, ShooterConfig.ROLLER_D, ShooterConfig.ROLLER_F));
     }
 
-    public void setNectar(int amount) {
-        nectar = amount;
+    public void moveToTick(int ticks) {
+        turret.setTargetPosition(ticks);
+        turret.setPower(ShooterConfig.TURRET_POWER);
     }
 
-    public int getPollen() {
-        return pollen;
+    public void runCounterRoller() {
+        double turretVelocity = turret.getVelocity();
+        double rollerVelocity = turretVelocity * ShooterConfig.ROLLER_TURRET_RATIO;
+
+        counterRoller.setVelocity(rollerVelocity);
     }
 
-    public int getNectar() {
-        return nectar;
+    public void stopCounterRoller() {
+        counterRoller.setVelocity(0);
     }
 
-
-    // ==========================================
-    // SHOOT
-    // ==========================================
-
-    public void shoot(double distance) {
-
-        // Save what we had when SHOOT was pressed
-        int pollenShot = pollen;
-        int nectarShot = nectar;
-
-        // Immediately clear inventory
-        pollen = 0;
-        nectar = 0;
-
-        // Calculate shooter velocity
-        double velocity =
-                getVelocityFromDistance(distance);
-
-        // Turn shooter ON
-        shooter.setVelocity(velocity);
-
-        // Turn transfer ON
-        transfer.setPower(
-                ShootingConstants.TRANSFER_POWER
-        );
+    public int getTurretTicks() {
+        return turret.getCurrentPosition();
     }
 
+    public void update() {
+        updatePIDF();
+        runCounterRoller();
+    }
+    public double getTurretVelocity() {
+        return turret.getVelocity();
+    }
 
-    // ==========================================
-    // STOP
-    // ==========================================
+    public double getCounterRollerVelocity() {
+        return counterRoller.getVelocity();
+    }
+
+    public double getAimer1Position() {
+        return aimer1.getPosition();
+    }
+
+    public double getAimer2Position() {
+        return aimer2.getPosition();
+    }
+    public int getTurretTarget() {
+        return turret.getTargetPosition();
+    }
+
+    public void addTelemetry(com.qualcomm.robotcore.eventloop.opmode.OpMode opMode) {
+        opMode.telemetry.addData("Shooter Ticks", getTurretTicks());
+        opMode.telemetry.addData("Shooter Target", turret.getTargetPosition());
+        opMode.telemetry.addData("Counter Roller Velocity", counterRoller.getVelocity());
+        opMode.telemetry.addData("Servo1 Position", aimer1.getPosition());
+        opMode.telemetry.addData("Servo2 Position", aimer2.getPosition());
+        opMode.telemetry.addData("Encoder A", encoderA.getState());
+        opMode.telemetry.addData("Encoder B", encoderB.getState());
+    }
 
     public void stop() {
-
-        shooter.setVelocity(0);
-
-        transfer.setPower(0);
+        turret.setPower(0);
+        counterRoller.setVelocity(0);
     }
 
 
-    // ==========================================
-    // DISTANCE → SHOOTER VELOCITY
-    // ==========================================
-
-    private double getVelocityFromDistance(
-            double distance) {
-
-        distance = Math.max(
-                ShootingConstants.MIN_DISTANCE,
-                Math.min(
-                        distance,
-                        ShootingConstants.MAX_DISTANCE
-                )
-        );
-
-        double ratio =
-                (distance - ShootingConstants.MIN_DISTANCE)
-                        /
-                        (ShootingConstants.MAX_DISTANCE
-                                - ShootingConstants.MIN_DISTANCE);
-
-        return ShootingConstants.MIN_DISTANCE_VELOCITY
-                +
-                ratio *
-                        (ShootingConstants.MAX_DISTANCE_VELOCITY
-                                - ShootingConstants.MIN_DISTANCE_VELOCITY);
-    }
-
-
-    public double getShooterVelocity() {
-        return shooter.getVelocity();
-    }
 }

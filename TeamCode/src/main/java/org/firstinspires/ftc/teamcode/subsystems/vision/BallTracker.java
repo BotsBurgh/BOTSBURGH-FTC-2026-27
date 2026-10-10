@@ -10,7 +10,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.HiveConfig;
+import org.firstinspires.ftc.teamcode.subsystems.vision.HiveConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;

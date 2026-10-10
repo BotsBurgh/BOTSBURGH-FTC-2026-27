@@ -17,9 +17,11 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:11.2.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.pedropathing:revhub:3.0.0'
-    implementation 'com.pedropathing:tuning:1.0.0'
+    implementation 'com.pedropathing:revhub:3.0.1'
+    implementation 'com.pedropathing:tuning:1.0.2'
 
     implementation 'com.bylazar.sloth:fullpanels:0.2.4+1.0.12'
-    implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
+    implementation 'dev.frozenmilk.sinister:Sloth:0.3.0'
+
+    implementation 'com.skeletonarmyftc.marrow:core:1.2.0'
 }

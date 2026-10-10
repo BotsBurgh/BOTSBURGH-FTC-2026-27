@@ -17,7 +17,7 @@
  * What is NOT here: class ids are tied to your trained model's label list
  * (set them below), and ball geometry (BALL_H, ball size) is a game truth.
  */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems.vision;
 
 public final class HiveConfig {
 
@@ -33,7 +33,7 @@ public final class HiveConfig {
     public static String MOTOR_RIGHT_FRONT = "rightFront";
     public static String MOTOR_LEFT_BACK   = "leftBack";
     public static String MOTOR_RIGHT_BACK  = "rightBack";
-    public static String MOTOR_INTAKE      = "intake";        // "" = no intake wired
+    public static String MOTOR_INTAKE      = "";        // "" = no intake wired
 
     /* ---------------- camera geometry (measure these) ---------------- */
 
@@ -71,11 +71,11 @@ public final class HiveConfig {
     public static double DRIVE_MIN_TX       = 15.0; // beyond this many degrees off, turn in place only
     public static double DRIVE_KP           = 0.03; // forward power per inch of distance error
     public static double MIN_FWD            = 0.15; // overcome static friction
-    public static double MAX_FWD            = 0.7;
+    public static double MAX_FWD            = 0.19;
     public static double TURN_KP            = 0.025;// power per degree of tx
-    public static double MIN_TURN           = 0.08; // friction floor when outside the tolerance
-    public static double MAX_TURN           = 0.6;
-    public static double SEARCH_TURN        = 0.30; // clockwise scan when nothing is visible
+    public static double MIN_TURN           = 0.08; // friction floor when outside tdhe tolerance
+    public static double MAX_TURN           = 0.1;
+    public static double SEARCH_TURN        = 0.1; // clockwise scan when nothing is visible
     public static double SEARCH_SWEEP_DEG   = 360.0;// give up (DONE) if we dead-reckon this far with nothing in view
     public static double TURN_RATE_RAD_PER_POWER_SEC = 3.5; // heading estimate for the sweep cap
     public static double COAST_MAX_DIST     = 26.0; // only coast if last seen within this, in
@@ -132,6 +132,6 @@ public final class HiveConfig {
     public static double SCORE_CONF_BONUS    = 0.20;   // up to -20% range for max confidence
     public static double OFF_AXIS_SCALE_DEG  = 45.0;
     public static double GO_TO_TIMEOUT_SEC   = 8.0;    // pose verbs (searchAt / then / thenReturnTo)
-    public static double GO_TO_POWER         = 0.7;
+    public static double GO_TO_POWER         = 0.3;
     public static long   LOOP_MS             = 10;     // BallWrangler.go() loop period
 }

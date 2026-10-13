@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.config;
 
-import com.bylazar.configurables.annotations.Configurable;
+//import com.bylazar.configurables.annotations.Configurable;
 
-@Configurable
+//@Configurable
 public class ShooterConfig {
+
     public static double TURRET_P = 10.0;
     public static double TURRET_I = 0.0;
     public static double TURRET_D = 0.0;

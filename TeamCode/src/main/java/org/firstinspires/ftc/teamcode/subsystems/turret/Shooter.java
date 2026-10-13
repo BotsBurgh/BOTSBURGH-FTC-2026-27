@@ -1,76 +1,75 @@
-package org.firstinspires.ftc.teamcode.subsystems.turret;
+        package org.firstinspires.ftc.teamcode.subsystems.turret;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 
 public class Shooter {
+
     private final DcMotorEx turret;
     private final DcMotorEx counterRoller;
-    private final Servo aimer1;
-    private final Servo aimer2;
 
-    private DigitalChannel encoderA;
-    private DigitalChannel encoderB;
+    public double turretPower = -0.48;
+    public double crpower = -1.0;
+
+    public double turretTargetVelocity = 0.0;
 
     public Shooter(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         counterRoller = hardwareMap.get(DcMotorEx.class, "counterRoller");
 
-        aimer1 = hardwareMap.get(Servo.class, "aimer1");
-        aimer2 = hardwareMap.get(Servo.class, "aimer2");
-
-        encoderA = hardwareMap.get(DigitalChannel.class, "encoderA");
-        encoderB = hardwareMap.get(DigitalChannel.class, "encoderB");
-
-        encoderA.setMode(DigitalChannel.Mode.INPUT);
-        encoderB.setMode(DigitalChannel.Mode.INPUT);
-
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setTargetPosition(0);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret.setPower(0);
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         counterRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        updatePIDF();
+        updateTurretPIDF();
     }
 
-    public void updatePIDF() {
-        turret.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(ShooterConfig.TURRET_P, ShooterConfig.TURRET_I, ShooterConfig.TURRET_D, ShooterConfig.TURRET_F));
-
-        counterRoller.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(ShooterConfig.ROLLER_P, ShooterConfig.ROLLER_I, ShooterConfig.ROLLER_D, ShooterConfig.ROLLER_F));
+    public void updateTurretPIDF() {
+        turret.setPIDFCoefficients(
+                DcMotor.RunMode.RUN_USING_ENCODER,
+                new PIDFCoefficients(
+                        ShooterConfig.TURRET_P,
+                        ShooterConfig.TURRET_I,
+                        ShooterConfig.TURRET_D,
+                        ShooterConfig.TURRET_F
+                )
+        );
     }
 
-    public void moveToTick(int ticks) {
-        turret.setTargetPosition(ticks);
-        turret.setPower(ShooterConfig.TURRET_POWER);
+    public void setTurretVelocity(double velocity) {
+        turretTargetVelocity = velocity;
+        turret.setVelocity(velocity);
+    }
+
+    public void runTurret() {
+        updateTurretPIDF();
+        turret.setVelocity(turretTargetVelocity);
+    }
+
+    public void runCR() {
+        counterRoller.setPower(crpower);
     }
 
     public void runCounterRoller() {
-        double turretVelocity = turret.getVelocity();
-        double rollerVelocity = turretVelocity * ShooterConfig.ROLLER_TURRET_RATIO;
+        double rollerVelocity =
+                turret.getVelocity() * ShooterConfig.ROLLER_TURRET_RATIO;
 
         counterRoller.setVelocity(rollerVelocity);
     }
 
     public void stopCounterRoller() {
-        counterRoller.setVelocity(0);
+        counterRoller.setPower(0);
     }
 
     public int getTurretTicks() {
         return turret.getCurrentPosition();
     }
 
-    public void update() {
-        updatePIDF();
-        runCounterRoller();
-    }
     public double getTurretVelocity() {
         return turret.getVelocity();
     }
@@ -79,31 +78,38 @@ public class Shooter {
         return counterRoller.getVelocity();
     }
 
-    public double getAimer1Position() {
-        return aimer1.getPosition();
-    }
-
-    public double getAimer2Position() {
-        return aimer2.getPosition();
-    }
     public int getTurretTarget() {
         return turret.getTargetPosition();
     }
 
-    public void addTelemetry(com.qualcomm.robotcore.eventloop.opmode.OpMode opMode) {
-        opMode.telemetry.addData("Shooter Ticks", getTurretTicks());
-        opMode.telemetry.addData("Shooter Target", turret.getTargetPosition());
-        opMode.telemetry.addData("Counter Roller Velocity", counterRoller.getVelocity());
-        opMode.telemetry.addData("Servo1 Position", aimer1.getPosition());
-        opMode.telemetry.addData("Servo2 Position", aimer2.getPosition());
-        opMode.telemetry.addData("Encoder A", encoderA.getState());
-        opMode.telemetry.addData("Encoder B", encoderB.getState());
+    public double getTurretTargetVelocity() {
+        return turretTargetVelocity;
+    }
+
+    public void addTelemetry(
+            com.qualcomm.robotcore.eventloop.opmode.OpMode opMode) {
+
+        opMode.telemetry.addData("Turret Ticks", getTurretTicks());
+        opMode.telemetry.addData("Turret Velocity", getTurretVelocity());
+        opMode.telemetry.addData(
+                "Turret Target Velocity", getTurretTargetVelocity());
+
+        opMode.telemetry.addData("Turret P", ShooterConfig.TURRET_P);
+        opMode.telemetry.addData("Turret I", ShooterConfig.TURRET_I);
+        opMode.telemetry.addData("Turret D", ShooterConfig.TURRET_D);
+        opMode.telemetry.addData("Turret F", ShooterConfig.TURRET_F);
+
+        opMode.telemetry.addData(
+                "Counter Roller Velocity", getCounterRollerVelocity());
+    }
+
+    public void update() {
+        runTurret();
+        runCR();
     }
 
     public void stop() {
-        turret.setPower(0);
-        counterRoller.setVelocity(0);
+        turret.setVelocity(0);
+        counterRoller.setPower(0);
     }
-
-
 }

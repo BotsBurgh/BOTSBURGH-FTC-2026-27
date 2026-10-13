@@ -19,14 +19,14 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.BallChaseController;
 public class Robot {
 
     // Temporary test drivetrain, replace with Pedro's Follower when tuned
-    public final Drivetrain drive;
-    public final Intake intake;
+//    public final Drivetrain drive;
+//    public final Intake intake;
     public final Shooter shooter;
 //    public final BallChaseController vision;
 
     public Robot(HardwareMap hardwareMap) {
-        drive = new Drivetrain(hardwareMap);
-        intake = new Intake(hardwareMap);
+//        drive = new Drivetrain(hardwareMap);
+//        intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
 //        vision = new BallChaseController(hardwareMap);
     }
@@ -35,13 +35,15 @@ public class Robot {
     public void update() {
 //        vision.update();
         // add intake.update(), shooter.update() here if they have them
+        shooter.runCR();
+        shooter.runTurret();
     }
 
     /** Call from stop(). */
     public void stop() {
-        drive.stop();
+//        drive.stop();
 //        vision.stop();
-        intake.stop();
+//        intake.stop();
         shooter.stop();
         // add intake/shooter stop methods here if they have them
     }

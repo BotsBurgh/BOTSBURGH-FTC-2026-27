@@ -11,7 +11,7 @@ android {
         jniLibs.useLegacyPackaging true
     }
 
-    // FTControl requirements (SDK 35 is recommended for Panels 1.0+)
+    // FTControl requirements
     compileSdk 35
     defaultConfig {
         minSdk 24
@@ -19,10 +19,8 @@ android {
 }
 
 dependencies {
-    // Links TeamCode to the primary robot controller application module
     implementation project(':FtcRobotController')
 
-    // Third-party dashboard and motion profiling libraries
     implementation 'com.bylazar:fullpanels:1.0.12'
     implementation 'com.pedropathing:revhub:3.0.1'
     implementation 'com.pedropathing:tuning:1.0.1'

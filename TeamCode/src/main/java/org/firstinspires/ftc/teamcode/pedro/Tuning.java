@@ -23,17 +23,21 @@ public class Tuning {
         return new PinpointTuner();
     }
 
-    // Add these after Foresight is tuned:
-    //
-     @Tuner
-     public static Procedure foresightTuner() {
-         return new ForesightTuner(
-                 hw -> new PinpointLocalizer(hw, Constants.localizerConfig),
-                 hw -> new Mecanum(hw, Constants.drivetrainConfig));
-     }
+
+    @Tuner
+    public static Procedure foresightTuner() {
+        return new ForesightTuner(
+                hw -> new PinpointLocalizer(hw, Constants.localizerConfig),
+                hw -> new Mecanum(hw, Constants.drivetrainConfig)
+        );
+    }
 
     @Tuner
     public static Procedure tests() {
-        return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig), (hardwareMap -> new PinpointLocalizer(hardwareMap, Constants.localizerConfig)), () -> new Foresight(Constants.foresightConfig));
+        return new Tests(
+                hw -> new Mecanum(hw, Constants.drivetrainConfig),
+                hw -> new PinpointLocalizer(hw, Constants.localizerConfig),
+                () -> new Foresight(Constants.foresightConfig)
+        );
     }
 }
